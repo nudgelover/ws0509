@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kbstar.mapper.MarkerMapper">
+
+    <select id="select" parameterType="Integer" resultType="marker">
+        SELECT *
+        FROM marker
+        WHERE id = #{id}
+    </select>
+    <select id="selectall" resultType="marker">
+        SELECT *
+        FROM marker
+    </select>
+    <insert id="insert" parameterType="marker">
+        INSERT INTO marker
+        VALUES (marker_seq.NEXTVAL, #{title}, #{target}, #{lat}, #{lng}, #{img}, #{loc})
+    </insert>
+    <update id="update" parameterType="marker">
+        UPDATE marker
+        SET title=#{title},
+            target=#{target},
+            lat=#{lat},
+            lng=#{lng},
+            img=#{img},
+            loc=#{loc}
+        WHERE id = #{id}
+    </update>
+    <delete id="delete" parameterType="int">
+        DELETE
+        FROM marker
+        WHERE id = #{id}
+    </delete>
+    <select id="getmyloc" parameterType="String" resultType="marker">
+        SELECT *
+        FROM marker
+        WHERE loc = upper(#{loc})
+--         db에 loc가 대문자임!
+    </select>
+    <select id="search" parameterType="markerSearch" resultType="marker">
+-- https://mybatis.org/mybatis-3/ko/dynamic-sql.html 참고
+        SELECT * FROM marker
+        <where>
+            <if test="loc != null and !loc.equals('')">
+                loc = UPPER(#{loc})
+            </if>
+            <if test="title != null and !title.equals('')">
+                AND title Like '%'||#{title}||'%'
+            </if>
+        </where>
+    </select>
+
+</mapper>
